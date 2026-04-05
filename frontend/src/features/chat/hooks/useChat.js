@@ -47,7 +47,14 @@ export const useChat = () => {
     }
   };
 
-  // persist conversations
+  const deleteConversation = (id) => {
+  const updated = conversations.filter((c) => c.id !== id);
+  setConversations(updated);
+  if (activeId === id) {
+    setActiveId(updated[0]?.id || null);
+  }
+};
+
   useEffect(() => {
     localStorage.setItem("conversations", JSON.stringify(conversations));
   }, [conversations]);
@@ -71,5 +78,6 @@ export const useChat = () => {
     activeId,
     setActiveId,
     createNewChat,
+    deleteConversation,
   };
 };

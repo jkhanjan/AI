@@ -4,7 +4,7 @@ import { cardConfig } from "@/lib/constant";
 
 export default function ChatBox() {
   const [input, setInput] = useState("");
-  const { messages, askAI, loading, createNewChat } = useChat();
+  const { messages, askAI, loading } = useChat();
 
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
@@ -70,13 +70,6 @@ export default function ChatBox() {
       {/* Header */}
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-sm font-medium text-gray-400">Chat</h2>
-
-        <button
-          onClick={createNewChat}
-          className="text-xs px-3 py-1 rounded-md bg-gray-800 text-gray-300 hover:bg-gray-700 transition"
-        >
-          New Chat
-        </button>
       </div>
 
       {/* Messages */}
