@@ -13,7 +13,6 @@ Tell:
 - Competitors
 - Target users
 
-lets keep it to 10 words for now
 `;
 
   return await askAI({
