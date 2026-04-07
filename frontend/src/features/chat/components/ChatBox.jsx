@@ -1,10 +1,18 @@
 import { useState, useEffect, useRef } from "react";
-import { useChat } from "../hooks/useChat";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { cardConfig } from "@/lib/constant";
+import { useChat } from "../context/ChatContext";
 
 export default function ChatBox() {
   const [input, setInput] = useState("");
-  const { messages, askAI, loading } = useChat();
+  const { conversations, activeId, askAI, loading } = useChat();
+
+  const activeConversation = conversations.find(
+  (c) => c.id === activeId
+);
+
+const messages = activeConversation?.messages || [];
 
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
@@ -16,10 +24,9 @@ export default function ChatBox() {
     setInput("");
     await askAI(text);
   };
-
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, loading]);
+  }, [messages, loading, activeId]);
 
   const renderContent = (msg) => {
     if (typeof msg.content !== "object") {
@@ -34,7 +41,7 @@ export default function ChatBox() {
 
     if (data && (data.idea || data.marketing || data.tech)) {
       return (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 w-full">
+        <div className="flex gap-4">
           {cardConfig.map(({ key, label, icon, colors }) =>
             data[key] ? (
               <div
@@ -47,9 +54,11 @@ export default function ChatBox() {
                     {label}
                   </span>
                 </div>
-                <p className="m-0 text-[13px] leading-relaxed text-gray-900">
-                  {data[key]}
-                </p>
+                <div className="text-sm whitespace-pre-wrap">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {data[key]}
+                    </ReactMarkdown>
+                </div>
               </div>
             ) : null
           )}
@@ -66,11 +75,6 @@ export default function ChatBox() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-2rem)] max-w-6xl mx-auto">
-
-      {/* Header */}
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-sm font-medium text-gray-400">Chat</h2>
-      </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto rounded-2xl p-5 mb-3 bg-gray-800 flex flex-col gap-5">
