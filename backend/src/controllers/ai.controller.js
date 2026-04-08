@@ -1,14 +1,20 @@
-const { multiAI } = require("../services/multiAI.services");
+const { multiAI, singleAI } = require("../services/multiAI.services");
 
 exports.chat = async (req, res) => {
   try {
-    const { prompt } = req.body;
+    const { prompt, mode } = req.body;
 
     if (!prompt) {
       return res.status(400).json({ message: "No prompt provided" });
     }
 
-    const response = await multiAI(prompt);
+    let response;
+
+    if (mode === "single") {
+      response = await singleAI(prompt);
+    } else {
+      response = await multiAI(prompt);
+    }
 
     res.json({
       response
