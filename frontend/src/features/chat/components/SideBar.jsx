@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from "react";
-import { useChat } from "../hooks/useChat";
 import { Trash2 } from "lucide-react";
+import { useChat } from "../context/ChatContext";
 
 const MIN_WIDTH = 180;
 const MAX_WIDTH = 480;

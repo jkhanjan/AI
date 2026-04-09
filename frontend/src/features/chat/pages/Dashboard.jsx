@@ -1,18 +1,17 @@
-import { useState, useRef, useCallback } from "react";
 import ChatBox from "../components/ChatBox";
 import Sidebar from "../components/SideBar";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useChat } from "../context/ChatContext";
 
 export default function Dashboard() {
+  const { activeId } = useChat(); 
 
   return (
     <div className="flex h-screen w-[100svw] bg-black text-white">
       {/* Desktop Sidebar */}
-      <div
-        className="hidden md:flex relative flex-shrink-0"
-      >
+      <div className="hidden md:flex relative flex-shrink-0">
         <Sidebar />
       </div>
 
@@ -21,8 +20,6 @@ export default function Dashboard() {
 
         {/* Top Bar */}
         <div className="flex items-center justify-between p-3">
-
-          {/* Mobile Drawer */}
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -33,12 +30,11 @@ export default function Dashboard() {
               <Sidebar />
             </SheetContent>
           </Sheet>
-
         </div>
 
         {/* Chat */}
         <div className="flex-1 min-w-0">
-          <ChatBox />
+          <ChatBox key={activeId} />  {/* ← key here */}
         </div>
 
       </div>

@@ -3,3 +3,7 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
