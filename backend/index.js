@@ -3,6 +3,7 @@ require('dotenv').config();
 const app = express();
 const authRoutes = require('./src/routes/auth.routes');
 const aiRoutes = require('./src/routes/ai.routes');
+const chatRoutes = require('./src/routes/saveChat.route')
 const cors = require('cors');
 
 const connectDB = require('./src/config/db');
@@ -18,6 +19,7 @@ connectDB();
 
 app.use('/auth', authRoutes);
 app.use('/ai', aiRoutes);
+app.use('/ai/', chatRoutes);
 
 app.use('/', (req, res) => {
     res.send(`server running on ${3000}`)
