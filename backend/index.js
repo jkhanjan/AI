@@ -19,6 +19,7 @@ connectDB();
 
 app.use('/auth', authRoutes);
 app.use('/ai', aiRoutes);
+
 app.use('/ai/', chatRoutes);
 
 app.use('/', (req, res) => {
