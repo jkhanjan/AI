@@ -4,12 +4,8 @@ import Message from "./Messages";
 import { useChat } from "../context/ChatContext";
 
 export default function ChatBox() {
-  const { conversations, activeId, askAI, loading } = useChat();
+  const { conversations, activeId, askAI, loading, messages } = useChat();
   const bottomRef = useRef(null);
-
-  const activeConversation = conversations.find((c) => c.id === activeId);
-  const messages = activeConversation?.messages || [];
-
   // Auto-scroll logic
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -18,7 +14,6 @@ export default function ChatBox() {
   return (
     <div className="flex flex-col h-[calc(100vh-2rem)] max-w-8xl mx-auto">
       
-      {/* Messages List */}
       <div className="flex-1 overflow-y-auto rounded-2xl p-5 mb-3 bg-gray-900 flex flex-col gap-5">
         
         {messages.length === 0 && !loading && (
@@ -27,7 +22,7 @@ export default function ChatBox() {
           </div>
         )}
 
-        {messages.map((msg, index) => (
+        {messages?.map((msg, index) => (
           <Message key={index} msg={msg} />
         ))}
 
@@ -37,7 +32,6 @@ export default function ChatBox() {
           </div>
         )}
 
-        {/* Scroll Anchor */}
         <div ref={bottomRef} />
       </div>
 
