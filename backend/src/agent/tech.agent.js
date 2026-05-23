@@ -46,8 +46,9 @@ Idea:
 ${idea}
 `;
 
-  return await askAI({
-    model: MODELS.REASONING,
-    prompt
-  });
+  return await chat({
+      model: MODELS.FAST,
+      systemPrompt: prompt,
+      prompt: input 
+    });
 };

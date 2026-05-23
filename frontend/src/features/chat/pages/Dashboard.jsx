@@ -34,7 +34,7 @@ export default function Dashboard() {
 
         {/* Chat */}
         <div className="flex-1 min-w-0">
-          <ChatBox key={activeId} />  {/* ← key here */}
+          <ChatBox key={activeId} />
         </div>
 
       </div>

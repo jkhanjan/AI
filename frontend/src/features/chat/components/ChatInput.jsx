@@ -11,7 +11,6 @@ export default function ChatInput({ onSend, loading }) {
 
     const text = input;
     setInput("");
-    
 
     await onSend({
       text,

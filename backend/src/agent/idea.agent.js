@@ -1,5 +1,5 @@
 import { MODELS } from "../config/model.config.mjs";
-import { askAI } from "../services/ai.services.js";
+import { chat } from "../services/ai.services.js";
 
 export const ideaAgent = async (input) => {
   const prompt = `
@@ -38,8 +38,9 @@ User Input:
 ${input}
 `;
 
-  return await askAI({
-    model: MODELS.FAST,
-    prompt
-  });
+  return await chat({
+      model: MODELS.REASONING,
+      systemPrompt: prompt,
+      prompt: input 
+    });
 };

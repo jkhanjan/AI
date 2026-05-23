@@ -19,7 +19,7 @@ connectDB();
 
 app.use('/auth', authRoutes);
 app.use('/ai', aiRoutes);
-app.use('/ai/', chatRoutes);
+app.use('/ai/history', chatRoutes);
 
 app.use('/', (req, res) => {
     res.send(`server running on ${3000}`)

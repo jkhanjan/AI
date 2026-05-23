@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { Trash2 } from "lucide-react";
 import { useChat } from "../context/ChatContext";
 
@@ -13,7 +13,7 @@ export default function Sidebar() {
     setActiveId, 
     createNewChat,
     deleteConversation
-  } = useChat();
+  } = useChat();  
 
   const [width, setWidth] = useState(DEFAULT_WIDTH);
   const isResizing = useRef(false);
@@ -56,13 +56,14 @@ export default function Sidebar() {
       </button>
 
       <div className="space-y-2 flex-1 overflow-y-auto">
-        {conversations.map((chat) => (
+
+        {conversations?.data?.map((chat) => (
           <div
-            key={chat.id}
-            onClick={() => setActiveId(chat.id)}
+            key={chat._id}
+            onClick={() => setActiveId(chat._id)}
             className={`p-2 rounded cursor-pointer hover:bg-muted bg-gray-800 
               flex justify-between items-center
-              ${activeId === chat.id ? "bg-muted" : ""}
+              ${activeId === chat._id ? "bg-muted" : ""} 
             `}
           >
             <span className="truncate">{chat.title}</span>
@@ -70,8 +71,8 @@ export default function Sidebar() {
             {/* Delete Button */}
             <button
               onClick={(e) => {
-                e.stopPropagation(); // VERY IMPORTANT
-                deleteConversation(chat.id);
+                e.stopPropagation(); 
+                deleteConversation(chat._id); 
               }}
               className="opacity-60 hover:opacity-100"
             >
@@ -79,6 +80,7 @@ export default function Sidebar() {
             </button>
           </div>
         ))}
+        
       </div>
 
       {/* Drag handle */}

@@ -19,7 +19,8 @@ export default function Message({ msg }) {
     }
 
     const data = msg?.content;
-
+    console.log(data);
+    
     if (data && (data.idea || data.marketing || data.tech)) {
       return (
         <div className="flex flex-col gap-2">
@@ -58,7 +59,7 @@ export default function Message({ msg }) {
               text-gray-200
             `}
           >
-            {cardConfig.map(({ key, label, icon, colors }) =>
+            {cardConfig?.map(({ key, label, icon, colors }) =>
               data[key] ? (
                 <div
                   key={key}

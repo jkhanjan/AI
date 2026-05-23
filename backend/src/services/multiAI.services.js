@@ -5,6 +5,8 @@ const { askAI } = require("./ai.services.js");
 
 // Multi Agent
 exports.multiAI = async (prompt) => {
+  console.log('entered multi ');
+  
   try {
     const [idea, marketing, tech] = await Promise.all([
       ideaAgent(prompt),
