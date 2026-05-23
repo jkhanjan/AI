@@ -1,117 +1,70 @@
-use email: try1@try1.com , password: try123 for first time use login
-
-# Project Name
+# AI Chatbot Platform
 
 A full-stack multi-turn AI chatbot platform built with Node.js, Express, MongoDB, and React.
 
-The system supports:
-- persistent conversations
-- contextual chat memory
-- pluggable LLM providers
-- inference logging
-- SDK-based observability
-- ingestion pipelines for analytics
+> **Demo credentials** — email: `try1@try1.com` · password: `try123`
 
-The architecture is designed to simulate how production-grade AI systems manage conversations, logging, and model interactions.
+---
 
-## Features
+## What it does
 
-- Custom Authentication login/signup
-- Multi-turn contextual conversations
-- Persistent chat sessions
-- Message history storage
-- Lightweight context memory
-- LLM provider abstraction layer
-- SDK-based inference logging
-- Structured ingestion pipeline
-- MongoDB-backed persistence
-- REST API architecture
-- Scalable service-oriented backend
+- Persistent multi-turn conversations with contextual memory
+- Pluggable LLM provider layer (currently Groq)
+- SDK-based inference logging with a structured ingestion pipeline
+- REST API backend with MongoDB persistence
+
+---
+
+## Tech Stack
+
+| Layer | Tech |
+|---|---|
+| Frontend | React, Vite |
+| Backend | Node.js, Express |
+| Database | MongoDB |
+| LLM Provider | Groq |
+| Auth | Custom JWT |
+
+---
 
 ## System Architecture
 
+```
 Frontend (React)
-      ↓
-Backend API (Express.js)
-      ↓
-Authentication
-      ↓
-Chat Controller
-      ↓
-AI Service Layer
-      ↓
-LLM Provider (Groq.)
+       │
+       ▼
+Backend API (Express)
+       │
+       ├── Authentication
+       │
+       └── Chat Controller
+              │
+              ▼
+       AI Service Layer
+              │
+              ▼
+       LLM Provider (Groq)
+```
 
----------------------------------
-
+```
 LLM SDK Wrapper
-      ↓
-Inference Logs
-      ↓
-Ingestion API
-      ↓
-MongoDB
-
-## Architecture Decisions
-
-### 1. Service Layer Abstraction
-
-The AI model interaction logic is isolated inside a dedicated service layer.
-
-Reason:
-- prevents controller bloat
-- allows switching between LLM providers
-- improves maintainability
-- simplifies testing
+       │
+       ▼
+  Inference Logs
+       │
+       ▼
+  Ingestion API
+       │
+       ▼
+    MongoDB
+```
 
 ---
-
-### 2. Persistent Conversation Storage
-
-Chats and messages are stored separately.
-
-Reason:
-- improves scalability
-- enables efficient querying
-- mimics real-world chat systems
-
----
-
-### 3. Lightweight Context Window
-
-Only recent messages are passed to the model instead of the full conversation history.
-
-Reason:
-- reduces token usage
-- improves response latency
-- prevents unnecessary context growth
-
----
-
-### 4. SDK-Based Logging
-
-A lightweight SDK wrapper captures inference metadata before responses are returned.
-
-Reason:
-- enables observability
-- supports future analytics
-- decouples logging from business logic
-
----
-
-### 5. Ingestion Pipeline
-
-Logs are processed through a dedicated ingestion layer before persistence.
-
-Reason:
-- separates raw logging from storage
-- allows future batching/queueing
-- improves extensibility for analytics pipelines
 
 ## Folder Structure
 
+```
 backend/
-│
 ├── controllers/
 ├── services/
 ├── routes/
@@ -123,110 +76,99 @@ backend/
 └── server.js
 
 frontend/
-├── public/                  # Static assets
-├── src/
-│   ├── app/                 # App config & routing
-│   ├── components/          # Shared UI components
-│   ├── context/             # Global contexts
-│   ├── features/
-│   │   ├── auth/            # Authentication module
-│   │   └── chat/            # Chat module
-│   ├── lib/                 # Utilities & configs
-│   ├── pages/               # Common pages
-│   ├── App.jsx
-│   └── main.jsx
-│
-├── package.json
-├── vite.config.js
-└── README.md
+├── public/
+└── src/
+    ├── app/
+    ├── components/
+    ├── context/
+    ├── features/
+    │   ├── auth/
+    │   └── chat/
+    ├── lib/
+    ├── pages/
+    ├── App.jsx
+    └── main.jsx
+```
 
+---
+
+## Key Design Decisions
+
+### 1. Service Layer Abstraction
+LLM interaction logic lives in a dedicated service layer — the controller never talks to the provider directly.
+
+```
+Controller → AI Service → Provider SDK
+```
+
+This makes it easy to swap providers, keeps controllers clean, and centralizes model configuration.
+
+---
+
+### 2. Persistent Conversation Storage
+Chats and messages are stored in separate collections. This mirrors real-world chat systems and makes querying efficient as conversations grow.
+
+---
+
+### 3. Lightweight Context Window
+Only the most recent N messages are passed to the model on each turn. This reduces token usage, lowers latency, and avoids unnecessary context growth.
+
+---
+
+### 4. SDK-Based Logging
+A thin SDK wrapper around every LLM call captures prompt, response, model, latency, timestamps, and token counts — before the response is returned to the user. This decouples observability from business logic.
+
+---
+
+### 5. Ingestion Pipeline
+Logs flow through a dedicated ingestion layer that validates, normalizes, and persists them. This keeps raw logging separate from storage and leaves room for batching or queuing later.
+
+---
 
 ## Context Management
 
-The chatbot supports lightweight multi-turn memory.
-
 For each request:
+
 1. Recent messages are fetched from MongoDB
-2. A limited context window is created
-3. The context is sent to the LLM
-4. The generated response is persisted
+2. A limited context window is built
+3. Context is sent to the LLM
+4. The response is persisted
 
-Currently, the system uses a rolling context strategy using the latest N messages.
+The rolling window strategy balances conversational continuity, token efficiency, and response speed.
 
-This approach balances:
-- conversational continuity
-- token efficiency
-- response speed
-
-## LLM Abstraction Layer
-
-The application uses a provider abstraction pattern.
-
-The controller never directly interacts with the LLM provider.
-
-Instead:
-Controller → AI Service → Provider SDK
-
-Benefits:
-- easy provider swapping
-- centralized model configuration
-- reusable inference logic
-- cleaner separation of concerns
-
-## SDK Logging System
-
-A lightweight SDK wrapper intercepts every LLM request.
-
-The SDK captures:
-- prompt
-- response
-- model name
-- latency
-- timestamps
-- token metadata
-
-This simulates production AI observability systems.
+---
 
 ## Ingestion Pipeline
 
-The ingestion layer receives logs from the SDK and processes them before storage.
+The ingestion service runs on port `4000` and exposes:
 
-Responsibilities:
-- payload validation
-- metadata extraction
-- normalization
-- persistence
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/ingest` | POST | Ingest a single LLM log |
+| `/api/ingest/logs` | GET | Query logs with filters |
 
-This design separates:
-application logic from analytics infrastructure.
+Filters available on GET: `status`, `sessionId`, `conversationId`, `limit`.
 
-## Tradeoffs & Limitations
+---
 
-### Current Limitations
+## Limitations
 
-- Context memory is limited to recent messages only
-- No vector database integration yet
-- No streaming responses
+- Context is limited to recent messages only (no vector/RAG memory)
 - Logging pipeline is synchronous
-- No distributed queue system
+- No streaming responses
+- No distributed queue for ingestion
 
-### Why These Choices Were Made
+These are intentional tradeoffs — the priority was a working, modular system over premature scaling.
 
-The current implementation prioritizes:
-- simplicity
-- faster iteration
-- modular architecture
-- assignment completion speed
-
-while keeping the system extensible for future scaling.
+---
 
 ## Future Improvements
 
-- Redis-based conversation caching
-- Vector memory / RAG integration
-- Streaming AI responses
-- Async queue-based ingestion
-- OpenTelemetry integration
-- Multi-provider fallback routing
-- Token analytics dashboard
-- Rate limiting and auth hardening
+- [ ] Redis-based conversation caching
+- [ ] Vector memory / RAG integration
+- [ ] Streaming AI responses
+- [ ] Async queue-based ingestion (e.g. BullMQ)
+- [ ] OpenTelemetry integration
+- [ ] Multi-provider fallback routing
+- [ ] Token analytics dashboard
+- [ ] Rate limiting and auth hardening
