@@ -13,7 +13,7 @@ const ChatContext = createContext(null);
 export function ChatProvider({ children }) {
   const [conversations, setConversations] = useState([]);
   const [activeId, setActiveId] = useState(null);
-  const [messages, setMessages] = useState([]); // Only holds messages for the active chat
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   
   useEffect(() => {
@@ -22,7 +22,7 @@ export function ChatProvider({ children }) {
         const chats = await fetchAllChats();
         setConversations(chats);
         if (chats.length > 0 && !activeId) {
-          setActiveId(chats); // Mongoose uses _id
+          setActiveId(chats); 
         }
       } catch (error) {
         console.error("Failed to load chats:", error);

@@ -25,7 +25,6 @@ export default function LoginForm() {
   };
 
   return (
-    // The wrapper div takes up the full height of the viewport and centers its content
     <div className="flex min-h-screen w-[100svw] items-center justify-center px-4">
       <form 
         onSubmit={onSubmit} 
