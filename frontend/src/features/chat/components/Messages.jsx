@@ -6,7 +6,6 @@ import { cardConfig } from "@/lib/constant";
 export default function Message({ msg }) {
   const isUser = msg.role === "user";
 
-  // 👇 View state
   const [view, setView] = useState("horizontal"); // horizontal | vertical
 
   const renderContent = () => {
