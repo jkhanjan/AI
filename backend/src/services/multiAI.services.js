@@ -3,7 +3,6 @@ const { marketAgent } = require("../agent/market.agent");
 const { techAgent } = require("../agent/tech.agent");
 const { askAI } = require("./ai.services.js");
 
-// Multi Agent
 exports.multiAI = async (prompt) => {
   console.log('entered multi ');
   
