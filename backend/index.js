@@ -3,7 +3,8 @@ require('dotenv').config();
 const app = express();
 const authRoutes = require('./src/routes/auth.routes');
 const aiRoutes = require('./src/routes/ai.routes');
-const chatRoutes = require('./src/routes/saveChat.route')
+const chatRoutes = require('./src/routes/saveChat.route');
+const pdfRoutes = require('./src/routes/pdf.routes');  // ← add this
 const cors = require('cors');
 
 const connectDB = require('./src/config/db');
@@ -20,11 +21,11 @@ connectDB();
 app.use('/auth', authRoutes);
 app.use('/ai', aiRoutes);
 app.use('/ai/history', chatRoutes);
+app.use('/ai/pdf', pdfRoutes);     
 
 app.use('/', (req, res) => {
     res.send(`server running on ${3000}`)
 })
-
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
