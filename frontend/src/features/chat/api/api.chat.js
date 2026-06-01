@@ -2,6 +2,7 @@ import api from "@/lib/axios";
 
 const AI_ROUTE = "/ai/chat";
 const HISTORY_ROUTE = "/ai/history/chat";
+const PDF_ROUTE = "/ai/pdf";
 
 export const generateAIResponse = async (prompt, mode) => {
   const res = await api.post(AI_ROUTE, { prompt, mode });
@@ -30,5 +31,17 @@ export const saveMessageDB = async (chatId, content) => {
 
 export const deleteChatDB = async (chatId) => {
   const res = await api.delete(`${HISTORY_ROUTE}/${chatId}`);
+  return res.data;
+};
+
+export const uploadPdfDB = async (formData, chatId) => {
+  const res = await api.post(`${PDF_ROUTE}/upload`, formData, {
+    headers: { "Content-Type": undefined }  // removes any global override
+  });
+  return res.data;
+};
+
+export const fetchPdfStatus = async (pdfId) => {
+  const res = await api.get(`${PDF_ROUTE}/status/${pdfId}`);
   return res.data;
 };
