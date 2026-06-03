@@ -1,8 +1,11 @@
 import axios from "axios";
 import { getToken } from "./auth";
 
+const BASE_URL = import.meta.env.VITE_PROD_API_URL || import.meta.env.VITE_LOCAL_API_URL;
+
+console.log(BASE_URL);
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: BASE_URL,
 });
 
 api.interceptors.request.use((config) => {
