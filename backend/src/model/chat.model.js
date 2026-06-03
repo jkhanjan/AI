@@ -10,6 +10,11 @@ const chatSchema = new mongoose.Schema({
   title: {
     type: String,
     default: "New Chat"
+  },
+  pdfId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Pdf",
+    default: null
   }
 
 }, { timestamps: true });

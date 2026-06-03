@@ -4,6 +4,8 @@ import {
   createChatDB, 
   fetchChatMessages, 
   saveMessageDB, 
+  uploadPdfDB,
+  fetchPdfStatus,
   generateAIResponse,
   deleteChatDB 
 } from "../api/api.chat";
@@ -15,6 +17,7 @@ export function ChatProvider({ children }) {
   const [activeId, setActiveId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [pdfStatus, setPdfStatus] = useState(null); // ← add this
   
   useEffect(() => {
     const loadChats = async () => {
@@ -34,7 +37,6 @@ export function ChatProvider({ children }) {
   useEffect(() => {
     const loadMessages = async () => {
       if (!activeId) return setMessages([]);
-      
       try {
         const dbMessages = await fetchChatMessages(activeId);
         setMessages(dbMessages);
@@ -43,6 +45,10 @@ export function ChatProvider({ children }) {
       }
     };
     loadMessages();
+  }, [activeId]);
+
+  useEffect(() => {
+    setPdfStatus(null);
   }, [activeId]);
 
   const askAI = async ({ text, mode }) => {
@@ -70,13 +76,40 @@ export function ChatProvider({ children }) {
     }
   };
 
+  const uploadPdf = async (file) => {
+    const formData = new FormData();
+    formData.append("pdf", file);
+    formData.append("chatId", activeId);
+
+    setPdfStatus("processing");
+
+    try {
+      const data = await uploadPdfDB(formData, activeId);
+      console.log("Upload response:", data);
+
+      const poll = setInterval(async () => {
+        const statusData = await fetchPdfStatus(data.pdfId);
+
+        if (statusData.pdf.status === "ready") {
+          setPdfStatus("ready");
+          clearInterval(poll);
+        }
+
+        if (statusData.pdf.status === "failed") {
+          setPdfStatus(null);
+          clearInterval(poll);
+        }
+      }, 2000);
+
+    } catch (err) {
+      console.error(err);
+      setPdfStatus(null);
+    }
+  };
+
   const createNewChat = async () => {
     try {
-      const response = await createChatDB();
-      console.log("Full response:", response);
-      
-      const newChat = response; 
-      
+      const newChat = await createChatDB();
       setConversations((prev) => [newChat, ...(Array.isArray(prev) ? prev : [])]);
       setActiveId(newChat._id);
     } catch (error) {
@@ -87,10 +120,8 @@ export function ChatProvider({ children }) {
   const deleteConversation = async (id) => {
     try {
       await deleteChatDB(id);
-      
       const updated = conversations.filter((c) => c._id !== id);
       setConversations(updated);
-      
       if (activeId === id) {
         setActiveId(updated.length > 0 ? updated[0]._id : null);
       }
@@ -107,6 +138,8 @@ export function ChatProvider({ children }) {
       messages, 
       loading, 
       askAI,
+      uploadPdf,       // ← add
+      pdfStatus,       // ← add
       createNewChat, 
       deleteConversation
     }}>

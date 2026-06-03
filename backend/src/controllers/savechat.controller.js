@@ -50,8 +50,8 @@ exports.addMessage = async (req, res) => {
     if (!content) return res.status(400).json({ message: "No content provided" });
 
     await Message.create({ chatId, role: "user", content });
+    const context = await getContext(chatId, content);
 
-    const context = await getContext(chatId);
     const reply = await askAI({ context });
 
     const assistantMessage = await Message.create({ chatId, role: "assistant", content: reply });
@@ -59,7 +59,7 @@ exports.addMessage = async (req, res) => {
     res.json({ message: assistantMessage.content });
 
   } catch (error) {
-    res.status(500).json({ message: "AI error", error: error.message });
+    res.status(500).json({ message: "AI error when sending message", error: error.message });
   }
 };
 

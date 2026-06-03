@@ -1,11 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChatInput from "./ChatInput";
 import Message from "./Messages";
 import { useChat } from "../context/ChatContext";
 
 export default function ChatBox() {
-  const { conversations, activeId, askAI, loading, messages } = useChat();
-  const bottomRef = useRef(null);
+  const { activeId, askAI, loading, messages, uploadPdf, pdfStatus } = useChat();
+  const bottomRef = useRef(null);                
+
   // Auto-scroll logic
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -13,12 +14,15 @@ export default function ChatBox() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-2rem)] max-w-8xl mx-auto">
-      
+
       <div className="flex-1 overflow-y-auto rounded-2xl p-5 mb-3 bg-gray-900 flex flex-col gap-5">
-        
+
         {messages.length === 0 && !loading && (
           <div className="flex flex-col items-center justify-center h-full gap-2 text-gray-400">
-            <p className="text-sm">Ask anything to get started</p>
+            {/* hint changes based on pdf state */}
+            {pdfStatus === "ready"      && <p className="text-sm">📄 PDF ready — ask anything about it</p>}
+            {pdfStatus === "processing" && <p className="text-sm">⏳ Processing your PDF...</p>}
+            {!pdfStatus                 && <p className="text-sm">Ask anything to get started</p>}
           </div>
         )}
 
@@ -35,9 +39,13 @@ export default function ChatBox() {
         <div ref={bottomRef} />
       </div>
 
-      {/* Input Area */}
-      <ChatInput onSend={askAI} loading={loading} />
-      
+      <ChatInput
+        onSend={askAI}
+        onPdfUpload={uploadPdf}   // ← add
+        loading={loading}
+        pdfStatus={pdfStatus}
+      />
+
     </div>
   );
 }
