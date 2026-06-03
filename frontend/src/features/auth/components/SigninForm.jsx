@@ -19,8 +19,6 @@ export default function SignupForm() {
         email,
         password,
       });
-
-      console.log(res);
       navigate("/dashboard");
     } catch (err) {
       console.log(err);

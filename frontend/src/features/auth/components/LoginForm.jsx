@@ -16,7 +16,6 @@ export default function LoginForm() {
 
     try {
       const res = await handleLogin({ email, password });
-      console.log(res);
       navigate("/dashboard");
 
     } catch (err) {

@@ -85,7 +85,6 @@ export function ChatProvider({ children }) {
 
     try {
       const data = await uploadPdfDB(formData, activeId);
-      console.log("Upload response:", data);
 
       const poll = setInterval(async () => {
         const statusData = await fetchPdfStatus(data.pdfId);
