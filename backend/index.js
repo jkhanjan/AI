@@ -26,7 +26,13 @@ app.use('/ai/pdf', pdfRoutes);
 app.use('/', (req, res) => {
     res.send(`server running on ${3000}`)
 })
-
+app.use("/health", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
 })
