@@ -46,7 +46,7 @@ export default function Sidebar() {
       style={{ width, minWidth: MIN_WIDTH, maxWidth: MAX_WIDTH }}
       className="relative flex-shrink-0 border-r p-4 flex flex-col"
     >
-      <h2 className="font-semibold mb-4">Chat History</h2>
+      {/* <h2 className="font-semibold mb-4 m-auto">Chat History</h2> */}
 
       <button
         onClick={createNewChat}

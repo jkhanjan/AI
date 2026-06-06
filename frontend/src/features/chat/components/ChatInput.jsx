@@ -21,7 +21,7 @@ export default function ChatInput({ onSend, onPdfUpload, loading, pdfStatus }) {
   };
 
   return (
-    <form onSubmit={handleSend} className="w-full px-4 py-2">
+    <form onSubmit={handleSend} className="w-full px-4 py-4">
       <div
         className="
           flex items-center gap-2
@@ -63,7 +63,7 @@ export default function ChatInput({ onSend, onPdfUpload, loading, pdfStatus }) {
           className="
             flex-1 bg-transparent border-none outline-none
             text-white text-sm placeholder:text-white/35
-            px-1 py-1.5 caret-white
+            px-1 py-3 caret-white
           "
         />
 
@@ -71,7 +71,7 @@ export default function ChatInput({ onSend, onPdfUpload, loading, pdfStatus }) {
           type="submit"
           disabled={loading || !input.trim() || pdfStatus === "processing"}
           className="
-            flex-shrink-0 px-3.5 py-1.5 rounded-[9px] text-sm text-white
+            flex-shrink-0 px-5 py-3 rounded-[9px] text-sm text-white
             bg-white/[0.12] border border-white/20
             hover:bg-white/20 disabled:opacity-35
             transition-colors duration-150
