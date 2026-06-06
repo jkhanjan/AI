@@ -15,7 +15,7 @@ export default function ChatBox() {
   return (
     <div className="flex flex-col h-[calc(100vh-2rem)] max-w-8xl mx-auto">
 
-      <div className="flex-1 overflow-y-auto rounded-2xl p-5 mb-3 bg-gray-900 flex flex-col gap-5">
+      <div className="flex-1 overflow-y-auto rounded-2xl p-5 mb-3 bg-black flex flex-col gap-5 m-10 relative">
 
         {messages.length === 0 && !loading && (
           <div className="flex flex-col items-center justify-center h-full gap-2 text-gray-400">
@@ -37,14 +37,16 @@ export default function ChatBox() {
         )}
 
         <div ref={bottomRef} />
-      </div>
 
-      <ChatInput
-        onSend={askAI}
-        onPdfUpload={uploadPdf}   // ← add
-        loading={loading}
-        pdfStatus={pdfStatus}
-      />
+         <div className="absolute bottom-0 w-full left-0">
+            <ChatInput
+            onSend={askAI}
+            onPdfUpload={uploadPdf}   // ← add
+            loading={loading}
+            pdfStatus={pdfStatus}
+          />
+         </div>
+      </div>
 
     </div>
   );

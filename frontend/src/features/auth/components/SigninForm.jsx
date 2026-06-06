@@ -26,7 +26,7 @@ export default function SignupForm() {
   };
 
   return (
-    <div className="flex min-h-screen w-[100svw] items-center justify-center px-4">
+    <div className="flex min-h-screen w-[100svw] items-center justify-center px-4 bg-black">
 
     <form onSubmit={onSubmit} className="space-y-4">
 
@@ -34,6 +34,12 @@ export default function SignupForm() {
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+         className="
+            flex-shrink-0 px-3 py-1.5 rounded-[9px] text-sm
+            bg-white/[0.08] border border-white/[0.15] text-white/75
+            hover:bg-white/[0.14] disabled:opacity-40
+            transition-colors duration-150
+          "
       />
 
       <Input
@@ -41,13 +47,25 @@ export default function SignupForm() {
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+         className="
+            flex-shrink-0 px-3 py-1.5 rounded-[9px] text-sm
+            bg-white/[0.08] border border-white/[0.15] text-white/75
+            hover:bg-white/[0.14] disabled:opacity-40
+            transition-colors duration-150
+          "
       />
 
-      <Button type="submit" className="w-full border-1 border-seconda">
+      <Button type="submit"  
+        className="
+            flex-shrink-0 w-full px-3 py-1.5 rounded-[9px] text-sm
+            bg-white/[0.08] border border-white/[0.15] text-white/75
+            hover:bg-white/[0.14] disabled:opacity-40
+            transition-colors duration-150
+          ">
         Signup
       </Button>
 
-      <Link to="/auth/login" className="text-sm text-primary">
+      <Link to="/auth/login" className="text-sm text-primary text-blue-200 hover:underline">
         Already have an account? Login
       </Link>
     </form>

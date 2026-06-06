@@ -50,7 +50,7 @@ export default function Sidebar() {
 
       <button
         onClick={createNewChat}
-        className="w-full mb-4 p-2 bg-black text-white rounded hover:bg-gray-800"
+        className="w-full mb-4 p-2 text-white rounded hover:bg-gray-800"
       >
         + New Chat
       </button>
@@ -61,7 +61,7 @@ export default function Sidebar() {
           <div
             key={chat._id}
             onClick={() => setActiveId(chat._id)}
-            className={`p-2 rounded cursor-pointer hover:bg-muted bg-gray-800 
+            className={`p-2 rounded cursor-pointer hover:bg-gray-700 bg-black 
               flex justify-between items-center
               ${activeId === chat._id ? "bg-muted" : ""} 
             `}

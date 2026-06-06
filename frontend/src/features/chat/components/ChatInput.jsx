@@ -8,62 +8,78 @@ export default function ChatInput({ onSend, onPdfUpload, loading, pdfStatus }) {
   const handleSend = async (e) => {
     e?.preventDefault();
     if (!input.trim() || loading) return;
-
     const text = input;
     setInput("");
-
     await onSend({ text, mode });
   };
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    await onPdfUpload(file);         // passes file up to parent
-    e.target.value = "";             // reset input
+    await onPdfUpload(file);
+    e.target.value = "";
   };
 
   return (
-    <form
-      onSubmit={handleSend}
-      className="flex gap-2 bg-gray-800 rounded-xl p-2 pl-4 items-center"
-    >
-      {/* Hidden file input */}
-      <input
-        type="file"
-        accept="application/pdf"
-        ref={fileRef}
-        onChange={handleFileChange}
-        className="hidden"
-      />
-
-      {/* PDF Button — shows status inline */}
-      <button
-        type="button"
-        onClick={() => fileRef.current.click()}
-        disabled={pdfStatus === "processing"}
-        className="px-3 py-2 rounded-lg bg-gray-700 text-white text-sm disabled:opacity-50"
+    <form onSubmit={handleSend} className="w-full px-4 py-2">
+      <div
+        className="
+          flex items-center gap-2
+          px-2 py-1.5 rounded-[14px]
+          bg-white/[0.06] border border-white/[0.12]
+          transition-all duration-200
+          focus-within:bg-white/10 focus-within:border-white/25
+          focus-within:ring-[3px] focus-within:ring-white/5
+        "
       >
-        {pdfStatus === "processing" && "⏳ Processing..."}
-        {pdfStatus === "ready"      && "📄 PDF Ready"}
-        {!pdfStatus                 && "📎 PDF"}
-      </button>
+        <input
+          type="file"
+          accept="application/pdf"
+          ref={fileRef}
+          onChange={handleFileChange}
+          className="hidden"
+        />
 
-      {/* Input */}
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder={pdfStatus === "ready" ? "Ask about your PDF..." : "Ask anything..."}
-        className="flex-1 text-white bg-transparent outline-none"
-      />
+        <button
+          type="button"
+          onClick={() => fileRef.current.click()}
+          disabled={pdfStatus === "processing"}
+          className="
+            flex-shrink-0 px-3 py-1.5 rounded-[9px] text-sm
+            bg-white/[0.08] border border-white/[0.15] text-white/75
+            hover:bg-white/[0.14] disabled:opacity-40
+            transition-colors duration-150
+          "
+        >
+          {pdfStatus === "processing" && "⏳ Processing..."}
+          {pdfStatus === "ready"      && "📄 PDF Ready"}
+          {!pdfStatus                 && "📎 PDF"}
+        </button>
 
-      {/* Send Button */}
-      <button
-        type="submit"
-        disabled={loading || !input.trim() || pdfStatus === "processing"}
-        className="px-4 py-2 rounded-lg bg-gray-900 text-white disabled:opacity-50"
-      >
-        Send
-      </button>
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder={pdfStatus === "ready" ? "Ask about your PDF..." : "Ask anything..."}
+          className="
+            flex-1 bg-transparent border-none outline-none
+            text-white text-sm placeholder:text-white/35
+            px-1 py-1.5 caret-white
+          "
+        />
+
+        <button
+          type="submit"
+          disabled={loading || !input.trim() || pdfStatus === "processing"}
+          className="
+            flex-shrink-0 px-3.5 py-1.5 rounded-[9px] text-sm text-white
+            bg-white/[0.12] border border-white/20
+            hover:bg-white/20 disabled:opacity-35
+            transition-colors duration-150
+          "
+        >
+          Send
+        </button>
+      </div>
     </form>
   );
 }
