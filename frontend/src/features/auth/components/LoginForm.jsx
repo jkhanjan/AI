@@ -13,22 +13,26 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const fillDemo = () => {
     setEmail(DEMO_EMAIL);
     setPassword(DEMO_PASSWORD);
   };
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    try {
-      await handleLogin({ email, password });
-      navigate("/dashboard");
-    } catch (err) {
-      setError("Invalid credentials. Try the demo account below.");
-    }
-  };
+ const onSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setLoading(true);
+  try {
+    await handleLogin({ email, password });
+    navigate("/dashboard");
+  } catch (err) {
+    setError("Invalid credentials. Try the demo account below.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="flex min-h-screen w-[100svw] items-center justify-center px-4 bg-black">
@@ -71,9 +75,18 @@ export default function LoginForm() {
 
           <Button
             type="submit"
+            disabled={loading}
             className="flex-shrink-0 w-full px-3 py-1.5 rounded-[9px] text-sm bg-white/[0.08] border border-white/[0.15] text-white/75 hover:bg-white/[0.14] disabled:opacity-40 transition-colors duration-150"
           >
-            Login
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+                Logging in...
+              </span>
+            ) : "Login"}
           </Button>
 
           <Link to="/auth/signin" className="block text-sm text-blue-200 hover:underline">
