@@ -1,13 +1,21 @@
-import React from 'react'
+import { useAuthContext } from "@/context/AuthContext";
+import React from "react";
 
 export default function UserMenu() {
-  const userEmail = "user@gmail.com"; // replace later from auth
+  const { user, logout } = useAuthContext();
 
   return (
-    <div className="absolute top-4 right-4">
-      <div className="px-4 py-2 border rounded-lg">
-        {userEmail}
-      </div>
+    <div className="flex items-center justify-between w-full">
+      <span className="truncate text-sm">
+        {user?.email}
+      </span>
+
+      <button
+        onClick={logout}
+        className="text-sm text-red-500 hover:text-red-400"
+      >
+        Logout
+      </button>
     </div>
   );
 }

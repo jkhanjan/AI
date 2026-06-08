@@ -34,7 +34,7 @@ export default function Dashboard() {
                 <Menu />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0 bg-black border-r">
+            <SheetContent side="left" className="bg-black text-white border-none">
               <Sidebar />
             </SheetContent>
           </Sheet>

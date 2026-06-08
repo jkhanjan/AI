@@ -6,7 +6,6 @@ import {
   saveMessageDB, 
   uploadPdfDB,
   fetchPdfStatus,
-  generateAIResponse,
   deleteChatDB 
 } from "../api/api.chat";
 
