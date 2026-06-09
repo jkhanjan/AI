@@ -19,7 +19,7 @@ app.use(express.json());
 connectDB();
 
 app.use('/auth', authRoutes);
-app.use('/ai', aiRoutes);
+// app.use('/ai', aiRoutes);
 app.use('/ai/history', chatRoutes);
 app.use('/ai/pdf', pdfRoutes);     
 
