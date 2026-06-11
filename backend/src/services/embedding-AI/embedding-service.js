@@ -32,7 +32,7 @@ async function embedAndStoreChunks({ chunks, pdfId, chatId }) {
   }
 
   await Chunk.insertMany(chunkDocs);
-  console.log(`Stored ${chunkDocs.length} chunks for pdfId: ${pdfId}`);
+  // console.log(`Stored ${chunkDocs.length} chunks for pdfId: ${pdfId}`);
 }
 
 function sleep(ms) {
