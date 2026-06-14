@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 
 export default function ChatInput({ onSend, onPdfUpload, loading, pdfStatus }) {
   const [input, setInput] = useState("");
-  const [mode, setMode] = useState("single");
   const fileRef = useRef(null);
 
   const handleSend = async (e) => {
@@ -10,7 +9,7 @@ export default function ChatInput({ onSend, onPdfUpload, loading, pdfStatus }) {
     if (!input.trim() || loading) return;
     const text = input;
     setInput("");
-    await onSend({ text, mode });
+    await onSend({ text });
   };
 
   const handleFileChange = async (e) => {

@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import { getToken } from "@/lib/auth";
 
 const AI_ROUTE = "/ai/chat";
 const HISTORY_ROUTE = "/ai/history/chat";
@@ -27,6 +28,26 @@ export const fetchChatMessages = async (chatId) => {
 export const saveMessageDB = async (chatId, content) => {
   const res = await api.post(`${HISTORY_ROUTE}/${chatId}/message`, { content });
   return res.data;
+};
+
+export const streamMessageDB = async (chatId, content) => {
+  const baseURL = import.meta.env.VITE_PROD_API_URL;
+
+  const res = await fetch(`${baseURL}/ai/history/chat/${chatId}/message/stream`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${getToken()}`
+    },
+    body: JSON.stringify({ content }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Stream failed: ${res.status} - ${err}`);
+  }
+
+  return res.body.getReader();
 };
 
 export const deleteChatDB = async (chatId) => {

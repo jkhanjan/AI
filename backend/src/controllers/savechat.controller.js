@@ -1,7 +1,7 @@
 const Message = require('../model/message.model')
 const Chat = require('../model/chat.model')
 const { getContext } = require('./chatcontext.controller');
-const { askAI } = require('../services/ai.services');
+const { askAI, askAIStream  } = require('../services/ai.services');
 
 exports.createChat = async (req, res) => {
   const chat = await Chat.create({
@@ -60,6 +60,43 @@ exports.addMessage = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ message: "AI error when sending message", error: error.message });
+  }
+};
+
+exports.addMessageStream = async (req, res) => {
+  try {
+    const { content } = req.body;
+    const chatId = req.params.id;
+
+    if (!content) return res.status(400).json({ message: "No content provided" });
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.flushHeaders();
+
+    await Message.create({ chatId, role: "user", content });
+    const context = await getContext(chatId, content);
+    const stream = await askAIStream({ context });
+
+    let fullReply = '';
+
+    for await (const chunk of stream) {
+      const token = chunk.choices[0]?.delta?.content || '';
+      if (token) {
+        fullReply += token;
+        res.write(`data: ${JSON.stringify({ token })}\n\n`);
+      }
+    }
+
+    await Message.create({ chatId, role: "assistant", content: fullReply });
+
+    res.write(`data: [DONE]\n\n`);
+    res.end();
+
+  } catch (error) {
+    res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+    res.end();
   }
 };
 

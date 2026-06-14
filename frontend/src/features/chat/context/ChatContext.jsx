@@ -3,7 +3,7 @@ import {
   fetchAllChats, 
   createChatDB, 
   fetchChatMessages, 
-  saveMessageDB, 
+  streamMessageDB,  
   uploadPdfDB,
   fetchPdfStatus,
   deleteChatDB 
@@ -15,8 +15,9 @@ export function ChatProvider({ children }) {
   const [conversations, setConversations] = useState([]);
   const [activeId, setActiveId] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [streamingMessage, setStreamingMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [pdfStatus, setPdfStatus] = useState(null); // ← add this
+  const [pdfStatus, setPdfStatus] = useState(null);
   
   useEffect(() => {
     const loadChats = async () => {
@@ -24,7 +25,7 @@ export function ChatProvider({ children }) {
         const chats = await fetchAllChats();
         setConversations(chats);
         if (chats.length > 0 && !activeId) {
-          setActiveId(chats); 
+          setActiveId(chats);
         }
       } catch (error) {
         console.error("Failed to load chats:", error);
@@ -64,9 +65,38 @@ export function ChatProvider({ children }) {
 
       setMessages((prev) => [...(prev || []), { role: "user", content: text }]);
 
-      const { message } = await saveMessageDB(currentChatId, text);
+      const reader = await streamMessageDB(currentChatId, text);
+      const decoder = new TextDecoder();
+      let fullReply = '';
 
-      setMessages((prev) => [...(prev || []), { role: "assistant", content: message }]);
+      setStreamingMessage('');
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const raw = decoder.decode(value, { stream: true });
+
+        const lines = raw.split('\n').filter(line => line.startsWith('data: '));
+
+        for (const line of lines) {
+          const payload = line.replace('data: ', '').trim();
+
+          if (payload === '[DONE]') {
+            setMessages((prev) => [...(prev || []), { role: "assistant", content: fullReply }]);
+            setStreamingMessage('');
+            break;
+          }
+
+          try {
+            const { token } = JSON.parse(payload);
+            if (token) {
+              fullReply += token;
+              setStreamingMessage(fullReply);
+            }
+          } catch (_) {}
+        }
+      }
 
     } catch (error) {
       console.error("Error asking AI:", error);
@@ -130,15 +160,16 @@ export function ChatProvider({ children }) {
   
   return (
     <ChatContext.Provider value={{
-      conversations, 
-      activeId, 
+      conversations,
+      activeId,
       setActiveId,
-      messages, 
-      loading, 
+      messages,
+      streamingMessage,
+      loading,
       askAI,
-      uploadPdf,       // ← add
-      pdfStatus,       // ← add
-      createNewChat, 
+      uploadPdf,
+      pdfStatus,
+      createNewChat,
       deleteConversation
     }}>
       {children}

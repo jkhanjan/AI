@@ -30,6 +30,16 @@ exports.askAI = async ({ context, model }) => {
   return content;
 };
 
+exports.askAIStream = async ({ context, model }) => {
+  const stream = await groq.chat.completions.create({
+    model: model || DEFAULT_MODEL,
+    messages: context,
+    stream: true,
+  });
+
+  return stream;
+};
+
 exports.chat = async ({ prompt, systemPrompt, model }) => {
   const context = [
     { role: "system", content: systemPrompt || DEFAULT_SYSTEM },
