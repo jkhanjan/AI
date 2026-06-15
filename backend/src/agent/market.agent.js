@@ -1,4 +1,4 @@
-import { askAI } from "../services/ai.services.js";
+import { askAIStream } from "../services/ai.services.js";
 import { MODELS } from "../config/model.config.mjs";
 
 export const marketAgent = async (idea) => {

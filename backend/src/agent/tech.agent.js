@@ -1,5 +1,5 @@
 import { MODELS } from "../config/model.config.mjs";
-import { askAI } from "../services/ai.services.js";
+import { askAIStream } from "../services/ai.services.js";
 
 export const techAgent = async (idea) => {
   const prompt = `
