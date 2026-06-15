@@ -4,7 +4,7 @@ const {
   createChat,
   getChats,
   getChatById,
-  addMessage,
+  // addMessage,
   getMessages,
   addMessageStream 
 } = require('../controllers/savechat.controller');
@@ -17,7 +17,7 @@ router.post('/chat', createChat);
 router.get('/chat', getChats);
 router.get('/chat/:id', getChatById);
 
-router.post('/chat/:id/message', addMessage);
+// router.post('/chat/:id/message', addMessage);
 router.post('/chat/:id/message/stream', addMessageStream);
 router.get('/chat/:id/messages', getMessages);
 
