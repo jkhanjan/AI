@@ -17,7 +17,6 @@ export default function ChatBox() {
     <div className="flex flex-col h-screen">
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-6">
-
           {messages.length === 0 && !loading && !streamingMessage && (
             <div className="flex flex-col items-center justify-center h-[60vh] gap-2 text-gray-500 text-sm">
               {pdfStatus === "ready"      && <p>📄 PDF ready — ask anything about it</p>}
