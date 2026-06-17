@@ -2,6 +2,8 @@ const Message = require('../model/message.model')
 const Chat = require('../model/chat.model')
 const { getContext } = require('./chatcontext.controller');
 const { askAIStream  } = require('../services/ai.services');
+const {getModelForTask} = require('../services/query-router/model-registry')
+const {classifyQuery} = require('../services/query-router/classifier')
 
 exports.createChat = async (req, res) => {
   const chat = await Chat.create({
@@ -63,11 +65,11 @@ exports.getChatById = async (req, res) => {
 //   }
 // };
 
+
 exports.addMessageStream = async (req, res) => {
   try {
     const { content } = req.body;
     const chatId = req.params.id;
-
     if (!content) return res.status(400).json({ message: "No content provided" });
 
     res.setHeader('Content-Type', 'text/event-stream');
@@ -76,11 +78,15 @@ exports.addMessageStream = async (req, res) => {
     res.flushHeaders();
 
     await Message.create({ chatId, role: "user", content });
-    const context = await getContext(chatId, content);
-    const stream = await askAIStream({ context });
+
+    const [context, task] = await Promise.all([
+      getContext(chatId, content),
+      classifyQuery(content)
+    ]);
+    const model = getModelForTask(task);
+    const stream = await askAIStream({ context, model });
 
     let fullReply = '';
-
     for await (const chunk of stream) {
       const token = chunk.choices[0]?.delta?.content || '';
       if (token) {
@@ -90,7 +96,6 @@ exports.addMessageStream = async (req, res) => {
     }
 
     await Message.create({ chatId, role: "assistant", content: fullReply });
-
     res.write(`data: [DONE]\n\n`);
     res.end();
 

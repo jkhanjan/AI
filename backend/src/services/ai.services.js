@@ -1,11 +1,8 @@
 const Groq = require("groq-sdk");
 const LLMLogger = require("../../sdk/llmLogger");
-
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-
-const DEFAULT_MODEL = "llama-3.3-70b-versatile";
 const DEFAULT_SYSTEM = "You are a helpful assistant.";
 
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 // exports.askAI = async ({ context, model }) => {
 //   const logger = new LLMLogger({
 //     provider: "groq",
@@ -32,7 +29,7 @@ const DEFAULT_SYSTEM = "You are a helpful assistant.";
 
 exports.askAIStream = async ({ context, model }) => {
   const stream = await groq.chat.completions.create({
-    model: model || DEFAULT_MODEL,
+    model: model,
     messages: context,
     stream: true,
   });

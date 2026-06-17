@@ -22,8 +22,6 @@ exports.uploadPdf = async (req, res) => {
     const { chatId } = req.body;
     const userId = req.user._id; 
     const parsed = await pdfParse(req.file.buffer);
-    console.log(chatId)
-
     // save pdf record
     const pdf = await Pdf.create({
       chatId,
@@ -33,10 +31,8 @@ exports.uploadPdf = async (req, res) => {
       pageCount: parsed.numpages
     });
 
-    // link pdf to chat
     await Chat.findByIdAndUpdate(chatId, { pdfId: pdf._id });
 
-    // trigger chunking + embedding in background
     processPdf(pdf._id, parsed.text).catch(console.error);
 
     res.status(200).json({ 

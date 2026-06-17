@@ -6,7 +6,6 @@ const chatSchema = new mongoose.Schema({
     required: true,
     ref: "User"
   },
-
   title: {
     type: String,
     default: "New Chat"
@@ -15,7 +14,17 @@ const chatSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Pdf",
     default: null
-  }
+  },
+
+  summary: {
+    type: String,
+    default: null
+  },
+  summarizedUpTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Message",
+    default: null
+  },
 
 }, { timestamps: true });
 
