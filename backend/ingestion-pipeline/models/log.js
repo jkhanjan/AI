@@ -5,6 +5,7 @@ const usageSchema = new mongoose.Schema(
     promptTokens: { type: Number, default: 0 },
     completionTokens: { type: Number, default: 0 },
     totalTokens: { type: Number, default: 0 },
+    contextTokens: { type: Number, default: 0 }, 
   },
   { _id: false }
 );
