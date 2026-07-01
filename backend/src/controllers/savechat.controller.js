@@ -3,7 +3,8 @@ const Chat = require('../model/chat.model')
 const { getContext } = require('./chatcontext.controller');
 const { askAIStream  } = require('../services/ai.services');
 const {getModelForTask} = require('../services/query-router/model-registry')
-const {classifyQuery} = require('../services/query-router/classifier')
+const {classifyQuery} = require('../services/query-router/classifier');
+const { extractGithubUrl, analyzeRepoForChat } = require('../services/repo-reader/repoReader');
 
 exports.createChat = async (req, res) => {
   const chat = await Chat.create({
@@ -83,8 +84,41 @@ exports.addMessageStream = async (req, res) => {
       getContext(chatId, content),
       classifyQuery(content)
     ]);
+
+    let finalContext = context; 
+    let analysisResult = null; 
+
+    if (task === "repo") {
+      const repoUrl = extractGithubUrl(content);
+
+      if (repoUrl) {
+        try {
+          const analysis = await analyzeRepoForChat(repoUrl);
+          analysisResult = analysis
+
+          const repoSummaryMessage = {
+            role: "system",
+            content: `[Repository Analysis for ${repoUrl}]
+              Summary: ${analysis.summary}
+              Tech Stack: ${analysis.techStack.join(", ")}
+              Architecture: ${analysis.architecture}
+              Features: ${analysis.features.join(", ")}
+              Deep link: ${analysis.deepLink}`,
+          };
+
+          finalContext = [...context, repoSummaryMessage];
+        } catch (err) {
+          console.error("[repo-analysis] failed:", err.message);
+          finalContext = [
+            ...context,                                           
+            { role: "system", content: `Note: attempted to analyze ${repoUrl} but the analysis failed.` },
+          ];
+        }
+      }
+    }
+
     const model = getModelForTask(task);
-    const stream = await askAIStream({ context, model });
+    const stream = await askAIStream({ context: finalContext, model });
 
     let fullReply = '';
     for await (const chunk of stream) {
@@ -93,6 +127,11 @@ exports.addMessageStream = async (req, res) => {
         fullReply += token;
         res.write(`data: ${JSON.stringify({ token })}\n\n`);
       }
+    }
+    if (analysisResult?.deepLink) {
+      const linkMarkdown = `\n\n[🔗 Open in Repo Reader](${analysisResult.deepLink})`;
+      fullReply += linkMarkdown;
+      res.write(`data: ${JSON.stringify({ token: linkMarkdown })}\n\n`);
     }
 
     await Message.create({ chatId, role: "assistant", content: fullReply });
