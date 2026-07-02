@@ -8,7 +8,7 @@ const { extractGithubUrl, analyzeRepoForChat } = require('../services/repo-reade
 
 exports.createChat = async (req, res) => {
   const chat = await Chat.create({
-    userId: req.user.id,
+    userId: req.user.id,                 
     title: "New Chat"
   });
 
@@ -96,14 +96,37 @@ exports.addMessageStream = async (req, res) => {
           const analysis = await analyzeRepoForChat(repoUrl);
           analysisResult = analysis
 
+          const prompt = `
+            User Question:
+
+            ${content}
+
+            Repository Context:
+
+            Summary:
+            ${analysis.summary}
+
+            Tech Stack:
+            ${analysis.techStack.join(", ")}
+
+            Architecture:
+            ${analysis.architecture}
+
+            Features:
+            ${analysis.features.join(", ")}
+
+            Instructions:
+
+            Answer ONLY the user's question.
+
+            Use the repository context when relevant.
+
+            Do not simply summarize the repository unless the user asked for a summary.
+            `;
+
           const repoSummaryMessage = {
             role: "system",
-            content: `[Repository Analysis for ${repoUrl}]
-              Summary: ${analysis.summary}
-              Tech Stack: ${analysis.techStack.join(", ")}
-              Architecture: ${analysis.architecture}
-              Features: ${analysis.features.join(", ")}
-              Deep link: ${analysis.deepLink}`,
+            content: prompt,
           };
 
           finalContext = [...context, repoSummaryMessage];
@@ -129,9 +152,7 @@ exports.addMessageStream = async (req, res) => {
       }
     }
     if (analysisResult?.deepLink) {
-      const linkMarkdown = `\n\n[🔗 Open in Repo Reader](${analysisResult.deepLink})`;
-      fullReply += linkMarkdown;
-      res.write(`data: ${JSON.stringify({ token: linkMarkdown })}\n\n`);
+      res.write(`data: ${JSON.stringify({ type: 'repo-link', url: analysisResult.deepLink })}\n\n`);
     }
 
     await Message.create({ chatId, role: "assistant", content: fullReply });

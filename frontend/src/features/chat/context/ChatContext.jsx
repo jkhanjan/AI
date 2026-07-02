@@ -16,6 +16,7 @@ export function ChatProvider({ children }) {
   const [activeId, setActiveId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [streamingMessage, setStreamingMessage] = useState('');
+  const [repoLink, setRepoLink] = useState(null);
   const [loading, setLoading] = useState(false);
   const [pdfStatus, setPdfStatus] = useState(null);
   
@@ -68,8 +69,10 @@ export function ChatProvider({ children }) {
       const reader = await streamMessageDB(currentChatId, text);
       const decoder = new TextDecoder();
       let fullReply = '';
+      let currentRepoLink = null;
 
       setStreamingMessage('');
+      setRepoLink(null);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -83,13 +86,19 @@ export function ChatProvider({ children }) {
           const payload = line.replace('data: ', '').trim();
 
           if (payload === '[DONE]') {
-            setMessages((prev) => [...(prev || []), { role: "assistant", content: fullReply }]);
+            setMessages((prev) => [...(prev || []), { role: "assistant", content: fullReply, repoLink: currentRepoLink }]);
             setStreamingMessage('');
+            setRepoLink(null);
             break;
           }
 
           try {
-            const { token } = JSON.parse(payload);
+            const { token, type, url } = JSON.parse(payload);
+            if (type === 'repo-link' && url) {
+              currentRepoLink = url;
+              setRepoLink(url);
+              continue;
+            }
             if (token) {
               fullReply += token;
               setStreamingMessage(fullReply);
@@ -100,6 +109,7 @@ export function ChatProvider({ children }) {
 
     } catch (error) {
       console.error("Error asking AI:", error);
+      setRepoLink(null);
     } finally {
       setLoading(false);
     }
@@ -165,6 +175,7 @@ export function ChatProvider({ children }) {
       setActiveId,
       messages,
       streamingMessage,
+      repoLink,
       loading,
       askAI,
       uploadPdf,

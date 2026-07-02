@@ -5,7 +5,7 @@ import { useChat } from "../context/ChatContext";
 import { useTypewriter } from "../hooks/useTypeWriter";
 
 export default function ChatBox() {
-  const { activeId, askAI, loading, messages, streamingMessage, uploadPdf, pdfStatus } = useChat();
+  const { activeId, askAI, loading, messages, streamingMessage, repoLink, uploadPdf, pdfStatus } = useChat();
   const displayText = useTypewriter(streamingMessage, 3);
   const bottomRef = useRef(null);
 
@@ -29,7 +29,7 @@ export default function ChatBox() {
             <Message key={index} msg={msg} />
           ))}
           {displayText && (
-            <Message msg={{ role: "assistant", content: streamingMessage }} />
+            <Message msg={{ role: "assistant", content: streamingMessage, repoLink }} />
           )}
           {loading && !streamingMessage && (
             <div className="text-gray-500 text-sm animate-pulse">

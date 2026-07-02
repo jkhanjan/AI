@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 export default function Message({ msg }) {
   const isUser = msg.role === "user";
 
@@ -36,6 +38,18 @@ export default function Message({ msg }) {
         `}
       >
         {renderContent()}
+        {msg.repoLink && !isUser && (
+          <a
+            href={msg.repoLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex"
+          >
+            <Button size="sm" variant="outline" className="rounded-sm border-gray-600 bg-gray-900/80 text-gray-100 hover:bg-gray-700">
+              Open in Repo Reader
+            </Button>
+          </a>
+        )}
       </div>
     </div>
   );
