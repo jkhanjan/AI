@@ -4,7 +4,7 @@ const app = express();
 const authRoutes = require('./src/routes/auth.routes');
 const aiRoutes = require('./src/routes/ai.routes');
 const chatRoutes = require('./src/routes/saveChat.route');
-const pdfRoutes = require('./src/routes/pdf.routes');  // ← add this
+const pdfRoutes = require('./src/routes/pdf.routes');  
 const cors = require('cors');
 
 const connectDB = require('./src/config/db');
