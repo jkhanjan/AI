@@ -192,6 +192,8 @@ For each request:
 
 ---
 
+![Alt text](./RAG-flo.png)
+
 ## Repo Reader Integration Flow
 
 1. User pastes or mentions a GitHub URL in chat
