@@ -4,13 +4,12 @@ const Chunk = require("../../model/chunk.model");
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 const embeddingModel = genAI.getGenerativeModel({ model: "gemini-embedding-2" });
 
-// embed a single chunk text
+
 async function embedText(text) {
   const result = await embeddingModel.embedContent(text);
-  return result.embedding.values; // returns array of 1536 numbers
+  return result.embedding.values; 
 }
 
-// embed all chunks and store in MongoDB
 async function embedAndStoreChunks({ chunks, pdfId, chatId }) {
   const chunkDocs = [];
 
@@ -27,7 +26,6 @@ async function embedAndStoreChunks({ chunks, pdfId, chatId }) {
       chunkIndex: i
     });
 
-    // small delay to avoid hitting rate limits on free tier
     await sleep(200);
   }
 
