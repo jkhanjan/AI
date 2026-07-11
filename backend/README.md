@@ -99,7 +99,13 @@ MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key
 GROQ_API_KEY=your_groq_api_key
 PORT=3000
+REPO_READER_BASE_URL=https://repo-reader-gules.vercel.app/
 ```
+
+### Environment
+
+- Set `REPO_READER_BASE_URL` to point to the repo-reader service endpoint (defaults to `https://repo-reader-gules.vercel.app/`).
+
 
 ### Run Server
 ```bash

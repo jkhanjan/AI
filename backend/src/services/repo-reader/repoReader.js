@@ -4,9 +4,10 @@ function extractGithubUrl(text) {
   const match = text.match(GITHUB_URL_REGEX);
   return match ? match[0] : null;
 }
+const REPO_READER_BASE_URL = process.env.REPO_READER_BASE_URL;
 
 async function analyzeRepoForChat(repoUrl) {
-  const response = await fetch("https://repo-reader-gules.vercel.app/api/public", {
+  const response = await fetch(`${REPO_READER_BASE_URL}/api/public`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
