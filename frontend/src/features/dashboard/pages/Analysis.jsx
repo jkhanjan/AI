@@ -88,8 +88,6 @@ export default function Analysis() {
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
-
-      {/* header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">LLM Dashboard</h1>
@@ -102,7 +100,6 @@ export default function Analysis() {
         </Button>
       </div>
 
-      {/* metric cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-1">
@@ -146,7 +143,6 @@ export default function Analysis() {
         </Card>
       </div>
 
-      {/* filters */}
       <div className="flex flex-wrap items-center gap-3">
         <Select value={status} onValueChange={setStatus}>
           <SelectTrigger className="w-36">
