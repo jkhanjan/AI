@@ -1,3 +1,4 @@
+const { Groq } = require('groq-sdk/client.js');
 const Message = require('../model/message.model')
 const Chat = require('../model/chat.model')
 const { getContext } = require('./chatcontext.controller');
@@ -5,6 +6,9 @@ const { askAIStream  } = require('../services/ai.services');
 const {getModelForTask} = require('../services/query-router/model-registry')
 const {classifyQuery} = require('../services/query-router/classifier');
 const { extractGithubUrl, analyzeRepoForChat } = require('../services/repo-reader/repoReader');
+const { executeTool } = require('../services/tools/executor');
+const { tools } = require('../services/tools/schema');
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 exports.createChat = async (req, res) => {
   const chat = await Chat.create({
@@ -80,68 +84,59 @@ exports.addMessageStream = async (req, res) => {
 
     await Message.create({ chatId, role: "user", content });
 
-    const [context, task] = await Promise.all([
-      getContext(chatId, content),
-      classifyQuery(content)
-    ]);
+    const context = await getContext(chatId, content);
+    const task = await classifyQuery(content); 
+    const model = getModelForTask(task);
 
-    let finalContext = context; 
-    let analysisResult = null; 
+    const messages = [
+      { role: "system", content: "If the user asks about a specific GitHub repository (by URL or referenced from earlier context), use the analyze_github_repo tool before answering." },
+      ...context,
+      { role: "user", content }
+    ];
 
-    if (task === "repo") {
-      const repoUrl = extractGithubUrl(content);
+    const decision = await groq.chat.completions.create({
+      model,
+      messages,
+      tools,
+      tool_choice: "auto"
+    });
+    console.log("[usage]", decision.usage); 
 
-      if (repoUrl) {
+
+    const decisionMsg = decision.choices[0].message;
+    const toolCalls = decisionMsg.tool_calls;
+    let deepLink = null;
+
+    if (toolCalls && toolCalls.length) {
+      messages.push(decisionMsg);
+
+      for (const call of toolCalls) {
+        res.write(`data: ${JSON.stringify({ type: 'status', message: `Running ${call.function.name}...` })}\n\n`);
+
         try {
-          const analysis = await analyzeRepoForChat(repoUrl);
-          analysisResult = analysis
+          const { result, deepLink: link } = await executeTool(call);
+          if (link) deepLink = link;
 
-          const prompt = `
-            User Question:
-
-            ${content}
-
-            Repository Context:
-
-            Summary:
-            ${analysis.summary}
-
-            Tech Stack:
-            ${analysis.techStack.join(", ")}
-
-            Architecture:
-            ${analysis.architecture}
-
-            Features:
-            ${analysis.features.join(", ")}
-
-            Instructions:
-
-            Answer ONLY the user's question.
-
-            Use the repository context when relevant.
-
-            Do not simply summarize the repository unless the user asked for a summary.
-            `;
-
-          const repoSummaryMessage = {
-            role: "system",
-            content: prompt,
-          };
-
-          finalContext = [...context, repoSummaryMessage];
+          messages.push({
+            role: "tool",
+            tool_call_id: call.id,
+            content: JSON.stringify(result)
+          });
         } catch (err) {
-          console.error("[repo-analysis] failed:", err.message);
-          finalContext = [
-            ...context,                                           
-            { role: "system", content: `Note: attempted to analyze ${repoUrl} but the analysis failed.` },
-          ];
+          messages.push({
+            role: "tool",
+            tool_call_id: call.id,
+            content: JSON.stringify({ error: `Tool execution failed: ${err.message}` })
+          });
         }
       }
     }
 
-    const model = getModelForTask(task);
-    const stream = await askAIStream({ context: finalContext, model });
+   const stream = await groq.chat.completions.create({
+      model,
+      messages,
+      stream: true
+    });
 
     let fullReply = '';
     for await (const chunk of stream) {
@@ -151,8 +146,9 @@ exports.addMessageStream = async (req, res) => {
         res.write(`data: ${JSON.stringify({ token })}\n\n`);
       }
     }
-    if (analysisResult?.deepLink) {
-      res.write(`data: ${JSON.stringify({ type: 'repo-link', url: analysisResult.deepLink })}\n\n`);
+
+    if (deepLink) {
+      res.write(`data: ${JSON.stringify({ type: 'repo-link', url: deepLink })}\n\n`);
     }
 
     await Message.create({ chatId, role: "assistant", content: fullReply });
