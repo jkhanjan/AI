@@ -1,0 +1,755 @@
+[
+{
+"id": "tc_001",
+"category": "general_chat",
+"query": "Can you explain the difference between a process and a thread in operating systems?",
+"history": [],
+"expected_route": "direct_llm",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": false,
+"expected_tool": null,
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"A process is an independent executing program with its own memory space.",
+"A thread is the unit of execution within a process.",
+"Threads share the same memory space of their parent process."
+],
+"must_not_contain": [
+"Threads do not share memory.",
+"A thread and a process are the exact same thing."
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "easy",
+"intent": "conceptual_understanding"
+}
+},
+{
+"id": "tc_002",
+"category": "rag",
+"query": "According to the uploaded Q3 financial report, what was our total revenue in APAC?",
+"history": [],
+"expected_route": "rag",
+"expected_behavior": {
+"should_use_rag": true,
+"should_call_tool": false,
+"expected_tool": null,
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"Total revenue in APAC was $45.2 million.",
+"This represents a 12% year-over-year growth in the region."
+],
+"must_not_contain": [
+"Global revenue",
+"Q2 financial data",
+"I don't have access to your documents."
+]
+},
+"expected_retrieval": {
+"sources": [
+"q3_financial_report_2025.pdf"
+],
+"chunks": [
+"page_12_regional_breakdown",
+"page_13_apac_summary"
+]
+},
+"metadata": {
+"difficulty": "medium",
+"intent": "document_qa"
+}
+},
+{
+"id": "tc_003",
+"category": "repo_reader",
+"query": "Where is the authentication middleware implemented in the AcmeCorp/backend-api repository?",
+"history": [],
+"expected_route": "repo_reader",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": true,
+"expected_tool": "repo_reader",
+"should_use_repo_reader": true
+},
+"expected_output": {
+"golden_facts": [
+"The authentication middleware is located in src/middleware/auth.ts.",
+"It uses JWT (JSON Web Tokens) for validating requests."
+],
+"must_not_contain": [
+"The code might be in...",
+"I cannot access GitHub repositories."
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "hard",
+"intent": "code_navigation"
+}
+},
+{
+"id": "tc_004",
+"category": "conversation_memory",
+"query": "Can you rewrite that last response but make it much more formal and concise?",
+"history": [
+{
+"role": "user",
+"content": "Write a quick message to my manager telling them I am taking sick leave today."
+},
+{
+"role": "assistant",
+"content": "Hey boss, I'm feeling super under the weather today with a nasty cold, so I'm gonna have to use a sick day. I'll catch up on everything tomorrow!"
+}
+],
+"expected_route": "direct_llm",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": false,
+"expected_tool": null,
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"The message must inform the manager about taking sick leave today.",
+"The tone must be professional, formal, and polite.",
+"The length should be short and direct."
+],
+"must_not_contain": [
+"Hey boss",
+"super under the weather",
+"gonna"
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "medium",
+"intent": "tone_adjustment"
+}
+},
+{
+"id": "tc_005",
+"category": "hybrid",
+"query": "Is the user data schema defined in the repo or is it detailed in the technical spec PDF I uploaded?",
+"history": [],
+"expected_route": "hybrid",
+"expected_behavior": {
+"should_use_rag": true,
+"should_call_tool": true,
+"expected_tool": "repo_reader",
+"should_use_repo_reader": true
+},
+"expected_output": {
+"golden_facts": [
+"Compare the user schema definitions found in the technical spec PDF and the GitHub repository.",
+"Identify the file path in the repo where the schema is located.",
+"Mention any discrepancies or confirmations between the two sources."
+],
+"must_not_contain": [
+"I can only check one source at a time.",
+"I don't have the ability to read repositories."
+]
+},
+"expected_retrieval": {
+"sources": [
+"technical_spec_v2.pdf"
+],
+"chunks": [
+"section_4_data_models"
+]
+},
+"metadata": {
+"difficulty": "hard",
+"intent": "cross_source_synthesis"
+}
+},
+{
+"id": "tc_006",
+"category": "tool_call",
+"query": "Create a Jira ticket for the authentication bug we just discussed.",
+"history": [
+{
+"role": "user",
+"content": "Users are getting a 500 error when they try to reset their passwords using the forgotten password link."
+},
+{
+"role": "assistant",
+"content": "It sounds like there's an issue with the password reset token generation or the email service integration. We should log this for the engineering team."
+}
+],
+"expected_route": "tool",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": true,
+"expected_tool": "jira_integration",
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"Acknowledge the creation of the Jira ticket.",
+"Include the issue details from the chat history (500 error on password reset)."
+],
+"must_not_contain": [
+"I cannot create tickets.",
+"What bug were we talking about?"
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "medium",
+"intent": "action_execution"
+}
+},
+{
+"id": "tc_007",
+"category": "tool_call",
+"query": "Can you check the current weather in Tokyo and tell me if I need an umbrella?",
+"history": [],
+"expected_route": "tool",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": true,
+"expected_tool": "weather_api",
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"Provide the current weather conditions in Tokyo.",
+"Give a clear 'yes' or 'no' recommendation regarding the umbrella based on precipitation data."
+],
+"must_not_contain": [
+"I don't have access to real-time weather.",
+"As an AI, I cannot check the weather."
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "easy",
+"intent": "real_time_information"
+}
+},
+{
+"id": "tc_008",
+"category": "rag",
+"query": "How many days of bereavement leave am I entitled to according to the Employee Handbook?",
+"history": [],
+"expected_route": "rag",
+"expected_behavior": {
+"should_use_rag": true,
+"should_call_tool": false,
+"expected_tool": null,
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"State the exact number of bereavement leave days allowed.",
+"Mention any conditions regarding immediate vs. extended family members if specified in the handbook."
+],
+"must_not_contain": [
+"Standard corporate policy usually allows 3 days.",
+"Please check with HR."
+]
+},
+"expected_retrieval": {
+"sources": [
+"employee_handbook_2024.pdf"
+],
+"chunks": [
+"section_5_time_off",
+"subsection_bereavement"
+]
+},
+"metadata": {
+"difficulty": "easy",
+"intent": "policy_extraction"
+}
+},
+{
+"id": "tc_009",
+"category": "conversation_memory",
+"query": "What about for Python?",
+"history": [
+{
+"role": "user",
+"content": "How do I reverse a string in JavaScript?"
+},
+{
+"role": "assistant",
+"content": "In JavaScript, you can reverse a string by splitting it into an array, reversing the array, and joining it back together: str.split('').reverse().join('')."
+}
+],
+"expected_route": "direct_llm",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": false,
+"expected_tool": null,
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"Understand that the user is asking how to reverse a string in Python.",
+"Provide the Python slicing syntax [::-1] or using reversed()."
+],
+"must_not_contain": [
+"What do you mean by 'Python'?",
+"JavaScript code."
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "easy",
+"intent": "contextual_follow_up"
+}
+},
+{
+"id": "tc_010",
+"category": "repo_reader",
+"query": "Find the definition of the UserProfile component in the frontend-react repo. What props does it accept?",
+"history": [],
+"expected_route": "repo_reader",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": true,
+"expected_tool": "repo_reader",
+"should_use_repo_reader": true
+},
+"expected_output": {
+"golden_facts": [
+"Identify the file path of the UserProfile component (e.g., src/components/UserProfile.tsx).",
+"List all the props defined in the component's interface/type definition."
+],
+"must_not_contain": [
+"I cannot read the repository files.",
+"It probably accepts user data."
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "medium",
+"intent": "code_analysis"
+}
+},
+{
+"id": "tc_011",
+"category": "hybrid",
+"query": "Based on the database schema in the uploaded SQL file, write a Python script that connects to the database and retrieves all users who registered last month.",
+"history": [],
+"expected_route": "hybrid",
+"expected_behavior": {
+"should_use_rag": true,
+"should_call_tool": false,
+"expected_tool": null,
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"Extract the exact table and column names from the uploaded SQL file.",
+"Generate a syntactically correct Python script using a library like psycopg2, sqlite3, or SQLAlchemy.",
+"Include a SQL query that filters by the registration date column for the previous month."
+],
+"must_not_contain": [
+"Generic table names like 'users' if the schema uses 'tbl_user_accounts'.",
+"I cannot read the SQL file."
+]
+},
+"expected_retrieval": {
+"sources": [
+"database_schema_v3.sql"
+],
+"chunks": [
+"create_table_users"
+]
+},
+"metadata": {
+"difficulty": "hard",
+"intent": "rag_to_code_generation"
+}
+},
+{
+"id": "tc_012",
+"category": "general_chat",
+"query": "Write a polite email declining a job offer because I have decided to stay at my current company. Mention I appreciate the team's time.",
+"history": [],
+"expected_route": "direct_llm",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": false,
+"expected_tool": null,
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"Include a polite salutation.",
+"Clearly state the decline of the job offer.",
+"Provide the reason: deciding to stay at the current company.",
+"Express gratitude for the interview process and their time."
+],
+"must_not_contain": [
+"Demanding or rude language.",
+"Mention of salary negotiations."
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "easy",
+"intent": "content_generation"
+}
+},
+{
+"id": "tc_013",
+"category": "rag",
+"query": "Compare the liability clauses in vendor_contract_A.pdf and vendor_contract_B.pdf. Which one favors us more?",
+"history": [],
+"expected_route": "rag",
+"expected_behavior": {
+"should_use_rag": true,
+"should_call_tool": false,
+"expected_tool": null,
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"Summarize the liability limits from Contract A.",
+"Summarize the liability limits from Contract B.",
+"Provide an analytical conclusion on which contract is more favorable based on the liability caps."
+],
+"must_not_contain": [
+"I can only read one document at a time.",
+"A generic definition of what a liability clause is."
+]
+},
+"expected_retrieval": {
+"sources": [
+"vendor_contract_A.pdf",
+"vendor_contract_B.pdf"
+],
+"chunks": [
+"contract_A_section_8_liability",
+"contract_B_clause_12_indemnification"
+]
+},
+"metadata": {
+"difficulty": "hard",
+"intent": "document_comparison"
+}
+},
+{
+"id": "tc_014",
+"category": "routing",
+"query": "Can you check my calendar for tomorrow and then search the web for some good restaurants near my 12 PM meeting?",
+"history": [],
+"expected_route": "tool",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": true,
+"expected_tool": "multi_tool_orchestration",
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"Identify the location of the 12 PM meeting from the calendar tool.",
+"Provide a list of highly-rated restaurants near that specific location using the web search tool."
+],
+"must_not_contain": [
+"I can only do one of those things.",
+"I cannot access your calendar."
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "hard",
+"intent": "multi_step_tool_execution"
+}
+},
+{
+"id": "tc_015",
+"category": "conversation_memory",
+"query": "Wait, change the tone to be super casual, like I'm texting my best friend.",
+"history": [
+{
+"role": "user",
+"content": "Draft an email inviting our clients to the annual gala."
+},
+{
+"role": "assistant",
+"content": "Dear Client, We cordially invite you to attend our annual gala..."
+},
+{
+"role": "user",
+"content": "Make it shorter."
+},
+{
+"role": "assistant",
+"content": "Dear Client, Please join us for our annual gala this year. We look forward to seeing you."
+}
+],
+"expected_route": "direct_llm",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": false,
+"expected_tool": null,
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"Maintain the context of inviting people to the annual gala.",
+"Use very informal, text-message style language (e.g., 'Hey!', 'gonna be epic', 'u in?')."
+],
+"must_not_contain": [
+"Dear Client",
+"cordially invite",
+"What are we inviting them to?"
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "medium",
+"intent": "iterative_refinement"
+}
+},
+{
+"id": "tc_016",
+"category": "repo_reader",
+"query": "Who made the last commit to the Dockerfile in the devops-scripts repository, and what was the commit message?",
+"history": [],
+"expected_route": "repo_reader",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": true,
+"expected_tool": "repo_reader",
+"should_use_repo_reader": true
+},
+"expected_output": {
+"golden_facts": [
+"Name the author of the most recent commit to the Dockerfile.",
+"Provide the exact commit message."
+],
+"must_not_contain": [
+"I cannot view commit history.",
+"The Dockerfile is used to build images."
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "medium",
+"intent": "git_history_query"
+}
+},
+{
+"id": "tc_017",
+"category": "hybrid",
+"query": "Search the logs folder in the api-service repository for 'OOMKilled'. Then, check my uploaded incident_playbook.md to tell me the mitigation steps for that specific error.",
+"history": [],
+"expected_route": "hybrid",
+"expected_behavior": {
+"should_use_rag": true,
+"should_call_tool": true,
+"expected_tool": "repo_reader",
+"should_use_repo_reader": true
+},
+"expected_output": {
+"golden_facts": [
+"Confirm whether 'OOMKilled' exists in the repository logs.",
+"Extract and list the mitigation steps for memory issues/OOMKilled directly from the uploaded playbook."
+],
+"must_not_contain": [
+"I can either search the repo or read the file, not both.",
+"Generic advice on fixing Out of Memory errors not found in the playbook."
+]
+},
+"expected_retrieval": {
+"sources": [
+"incident_playbook.md"
+],
+"chunks": [
+"section_oom_mitigation",
+"troubleshooting_memory"
+]
+},
+"metadata": {
+"difficulty": "hard",
+"intent": "log_analysis_and_sop_retrieval"
+}
+},
+{
+"id": "tc_018",
+"category": "tool_call",
+"query": "Query the production database to find how many users have the 'premium' subscription tier active right now.",
+"history": [],
+"expected_route": "tool",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": true,
+"expected_tool": "sql_execution",
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"Execute a safe read-only SQL query to count premium users.",
+"Return the final count to the user in a natural language sentence."
+],
+"must_not_contain": [
+"I cannot query databases.",
+"Here is the SQL query you should run yourself:"
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "medium",
+"intent": "database_querying"
+}
+},
+{
+"id": "tc_019",
+"category": "general_chat",
+"query": "Explain the concept of 'Eventual Consistency' to a 10-year-old.",
+"history": [],
+"expected_route": "direct_llm",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": false,
+"expected_tool": null,
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"Use a simple, relatable analogy (e.g., passing a rumor, syncing game scores across different screens).",
+"Explain that there is a delay before everyone has the same information.",
+"Avoid deep technical jargon like 'CAP theorem', 'replicas', or 'distributed systems'."
+],
+"must_not_contain": [
+"Nodes",
+"Network partitions",
+"Database replication logs"
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "easy",
+"intent": "eli5_explanation"
+}
+},
+{
+"id": "tc_020",
+"category": "rag",
+"query": "Look at the uploaded PDF on Q4 Marketing Spend. What was the exact ROI percentage for the Facebook Ads campaign?",
+"history": [],
+"expected_route": "rag",
+"expected_behavior": {
+"should_use_rag": true,
+"should_call_tool": false,
+"expected_tool": null,
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"Extract the specific ROI percentage for Facebook Ads.",
+"Reference the chart or page where this was found in the document."
+],
+"must_not_contain": [
+"Google Ads ROI",
+"General marketing advice",
+"I couldn't find the exact number."
+]
+},
+"expected_retrieval": {
+"sources": [
+"Q4_Marketing_Spend.pdf"
+],
+"chunks": [
+"page_4_social_media_roi",
+"table_2_campaign_performance"
+]
+},
+"metadata": {
+"difficulty": "easy",
+"intent": "fact_extraction"
+}
+},
+{
+"id": "tc_021",
+"category": "routing",
+"query": "Hi! Just wanted to say you've been very helpful today.",
+"history": [
+{
+"role": "user",
+"content": "Can you summarize this legal text?"
+},
+{
+"role": "assistant",
+"content": "Here is the summary..."
+}
+],
+"expected_route": "direct_llm",
+"expected_behavior": {
+"should_use_rag": false,
+"should_call_tool": false,
+"expected_tool": null,
+"should_use_repo_reader": false
+},
+"expected_output": {
+"golden_facts": [
+"Acknowledge the compliment.",
+"Respond warmly and politely.",
+"Offer further assistance if needed."
+],
+"must_not_contain": [
+"Calling a tool",
+"Searching the knowledge base",
+"I am an AI and do not feel emotions."
+]
+},
+"expected_retrieval": {
+"sources": [],
+"chunks": []
+},
+"metadata": {
+"difficulty": "easy",
+"intent": "chit_chat"
+}
+}
+]
