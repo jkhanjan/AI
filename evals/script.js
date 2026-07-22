@@ -1,12 +1,12 @@
 const fs = require("fs");
 const path = require("path");
 
-const BASE_URL = process.env.EVAL_BASE_URL || "http://localhost:3000";
+const BASE_URL = process.env.EVAL_BASE_URL || "http://localhost:3000/ai/history";
 const DATASET_PATH = path.join(__dirname, "..", "evals/dataset", "testcases.json");
 const RESULTS_DIR = path.join(__dirname, "..", "evals/results"); 
 
 async function createChat() {
-  const res = await fetch(`${BASE_URL}/chats`, {
+  const res = await fetch(`${BASE_URL}/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ title: `eval-run-${Date.now()}` })
@@ -17,8 +17,7 @@ async function createChat() {
 }
 
 async function attachPdfToChat(chatId, pdfId) {
-  // TODO: adjust to your actual attach-pdf route/shape once confirmed
-  const res = await fetch(`${BASE_URL}/chats/${chatId}/pdf`, {
+  const res = await fetch(`${BASE_URL}/chat/${chatId}/pdf`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ pdfId })
@@ -31,7 +30,7 @@ async function attachPdfToChat(chatId, pdfId) {
 // ─────────────────────────────────────────────
 
 async function callChatApp(chatId, content) {
-  const res = await fetch(`${BASE_URL}/chats/${chatId}/messages/stream`, {
+  const res = await fetch(`${BASE_URL}/chat/${chatId}/messages/stream`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ content })
