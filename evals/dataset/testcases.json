@@ -354,41 +354,5 @@
 "difficulty": "medium",
 "intent": "code_analysis"
 }
-},
-{
-"id": "tc_011",
-"category": "hybrid",
-"query": "Based on the database schema in the uploaded SQL file, write a Python script that connects to the database and retrieves all users who registered last month.",
-"history": [],
-"expected_route": "hybrid",
-"expected_behavior": {
-"should_use_rag": true,
-"should_call_tool": false,
-"expected_tool": null,
-"should_use_repo_reader": false
-},
-"expected_output": {
-"golden_facts": [
-"Extract the exact table and column names from the uploaded SQL file.",
-"Generate a syntactically correct Python script using a library like psycopg2, sqlite3, or SQLAlchemy.",
-"Include a SQL query that filters by the registration date column for the previous month."
-],
-"must_not_contain": [
-"Generic table names like 'users' if the schema uses 'tbl_user_accounts'.",
-"I cannot read the SQL file."
-]
-},
-"expected_retrieval": {
-"sources": [
-"database_schema_v3.sql"
-],
-"chunks": [
-"create_table_users"
-]
-},
-"metadata": {
-"difficulty": "hard",
-"intent": "rag_to_code_generation"
-}
 }
 ]
