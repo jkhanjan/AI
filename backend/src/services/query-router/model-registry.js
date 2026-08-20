@@ -1,12 +1,12 @@
 const MODELS = {
-  "llama-3.1-8b-instant": {
-    id: "llama-3.1-8b-instant",
+  "qwen/qwen3.6-27b": {
+    id: "qwen/qwen3.6-27b",
     for: ["simple"],
     supportsTools: true,
     provider: "groq"
   },
-  "llama-3.3-70b-versatile": {
-    id: "llama-3.3-70b-versatile",
+  "openai/gpt-oss-120b": {
+    id: "openai/gpt-oss-120b",
     for: ["complex", "code", "tool-decision"],
     supportsTools: true,
     provider: "groq"
@@ -20,9 +20,9 @@ const MODELS = {
 };
 
 function getModelForTask(task) {  
-  if (!task) return "llama-3.3-70b-versatile";
+  if (!task) return "openai/gpt-oss-120b";
   const match = Object.values(MODELS).find(m => m.for.includes(task));
-  return match?.id || "llama-3.3-70b-versatile";
+  return match?.id || "openai/gpt-oss-120b";
 }
 
 function registerModel({ id, for: tasks, provider }) {

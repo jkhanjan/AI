@@ -1,11 +1,11 @@
 export const MODELS = {
-  "llama-3.1-8b-instant": {
-    id: "llama-3.1-8b-instant",
+  "qwen/qwen3.6-27b": {
+    id: "qwen/qwen3.6-27b",
     for: ["simple"],
     provider: "groq"
   },
-  "llama-3.3-70b-versatile": {
-    id: "llama-3.3-70b-versatile",
+  "openai/gpt-oss-120b": {
+    id: "openai/gpt-oss-120b",
     for: ["complex", "pdf", "code"],
     provider: "groq"
   }

@@ -6,7 +6,7 @@ async function rerankChunks({ query, chunks, topK = 3 }) {
     const scoredChunks = await Promise.all(
       chunks.map(async (chunk) => {
         const response = await groq.chat.completions.create({
-          model: "llama-3.1-8b-instant",
+          model: "qwen/qwen3.6-27b",
           messages: [
             {
               role: "user",

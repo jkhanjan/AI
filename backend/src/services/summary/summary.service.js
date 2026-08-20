@@ -2,7 +2,7 @@ const Groq = require("groq-sdk");
 const Chat = require("../../model/chat.model");
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-const SUMMARY_MODEL = "llama-3.1-8b-instant";
+const SUMMARY_MODEL = "qwen/qwen3.6-27b";
 
 async function getOrUpdateSummary({ chat, olderMsgs }) {
   if (!olderMsgs.length) return chat.summary;
