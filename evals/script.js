@@ -25,9 +25,7 @@ async function attachPdfToChat(chatId, pdfId) {
   if (!res.ok) throw new Error(`attachPdfToChat failed: ${res.status} ${await res.text()}`);
 }
 
-// ─────────────────────────────────────────────
 // 2. SSE call + buffering
-// ─────────────────────────────────────────────
 
 async function callChatApp(chatId, content) {
   const res = await fetch(`${BASE_URL}/chat/${chatId}/messages/stream`, {
@@ -96,9 +94,7 @@ async function callChatApp(chatId, content) {
   return { ...collected, answer: fullReply };
 }
 
-// ─────────────────────────────────────────────
 // 3. Scoring helpers
-// ─────────────────────────────────────────────
 
 function arraysEqual(a = [], b = []) {
   if (a.length !== b.length) return false;
@@ -120,9 +116,7 @@ async function llmJudge(answer, goldenAnswer, rubric) {
   return null;
 }
 
-// ─────────────────────────────────────────────
 // 4. Per-test-case runner
-// ─────────────────────────────────────────────
 
 async function runTestCase(testCase) {
   const chatId = await createChat();
