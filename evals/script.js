@@ -169,10 +169,7 @@ async function runTestCase(testCase) {
     raw_answer: response.answer
   };
 }
-
-// ─────────────────────────────────────────────
 // 5. Main
-// ─────────────────────────────────────────────
 
 async function main() {
   const dataset = JSON.parse(fs.readFileSync(DATASET_PATH, "utf-8"));
