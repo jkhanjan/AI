@@ -49,7 +49,6 @@ export default function Analysis() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // filters
   const [status, setStatus] = useState("all");
   const [sessionId, setSessionId] = useState("");
   const [limit, setLimit] = useState("25");
