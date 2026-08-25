@@ -72,7 +72,7 @@ export default function Sidebar() {
             e.stopPropagation();
             deleteConversation(chat._id);
           }}
-          className="opacity-60 hover:opacity-100"
+          className="opacity-60 hover:opacity-100 cursor-pointer"
         >
           <Trash2 size={16} />
         </button>

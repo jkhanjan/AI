@@ -5,7 +5,8 @@ const {
   getChats,
   getChatById,
   getMessages,
-  addMessageStream 
+  addMessageStream,
+  deleteTab
 } = require('../controllers/savechat.controller');
 const { protect } = require('../middleware/auth.middleware');
 
@@ -15,6 +16,7 @@ router.use(protect);
 router.post('/chat', createChat); 
 router.get('/chat', getChats);
 router.get('/chat/:id', getChatById);
+router.delete('/chat/:id', deleteTab);
 
 // router.post('/chat/:id/message', addMessage);
 router.post('/chat/:id/message/stream', addMessageStream);

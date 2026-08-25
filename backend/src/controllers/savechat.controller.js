@@ -168,3 +168,17 @@ exports.getMessages = async (req, res) => {
 
   res.json(messages);
 };
+
+exports.deleteTab = async (req, res) => {
+  const chatId = req.params.id;
+
+  const deletedChat = await Chat.findByIdAndDelete(chatId);
+
+  if (!deletedChat) {
+    return res.status(404).json({ message: 'Chat not found' });
+  }
+
+  await Message.deleteMany({ chatId });
+
+  res.json({ message: 'Chat and its messages deleted', id: chatId });
+};

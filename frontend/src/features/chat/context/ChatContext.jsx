@@ -158,7 +158,7 @@ export function ChatProvider({ children }) {
   const deleteConversation = async (id) => {
     try {
       await deleteChatDB(id);
-      const updated = conversations.filter((c) => c._id !== id);
+      const updated = conversations.data.filter((c) => c._id !== id);
       setConversations(updated);
       if (activeId === id) {
         setActiveId(updated.length > 0 ? updated[0]._id : null);
