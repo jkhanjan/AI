@@ -1,5 +1,4 @@
 const Pdf = require("../../model/pdf.model");
-const Chunk = require("../../model/chunk.model");
 const { embedAndStoreChunks } = require("../embedding-AI/embedding-service");
 
 function chunkText(text, chunkSize = 100, overlap = 40) {
