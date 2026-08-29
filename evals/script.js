@@ -70,7 +70,7 @@ async function callChatApp(chatId, content) {
       try {
         evt = JSON.parse(raw);
       } catch {
-        continue; // skip malformed chunks rather than crashing the whole run
+        continue; // skip malformed chunks rather than crashing the whole
       }
 
       if (evt.error) {
@@ -104,7 +104,7 @@ function arraysEqual(a = [], b = []) {
 }
 
 function retrievalHit(retrievedChunks, expectedDocIds) {
-  if (!expectedDocIds || expectedDocIds.length === 0) return null; // not applicable
+  if (!expectedDocIds || expectedDocIds.length === 0) return null; 
   const retrievedIds = retrievedChunks.map(c => c.id);
   return expectedDocIds.every(id => retrievedIds.includes(id));
 }
