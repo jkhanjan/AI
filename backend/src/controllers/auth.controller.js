@@ -3,9 +3,15 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 exports.signup = async(req, res) => {
+  try {
     const {email, password} = req.body;
     if(!email || !password){
-      return res.status(400).json('email or password is not provided')
+      return res.status(400).json({ message: 'email or password is not provided' })
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: 'Email already in use' });
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
@@ -13,9 +19,28 @@ exports.signup = async(req, res) => {
         email,
         password: hashPassword
     })
-     await user.save();
+    await user.save();
 
-    res.status(201).json({message: 'User created successfully'})
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.status(201).json({
+      message: 'User created successfully',
+      token,
+      user: {
+        id: user._id,
+        email: user.email
+      }
+    })
+  } catch (error) {
+    if (error.code === 11000) {
+      return res.status(409).json({ message: 'Email already in use' });
+    }
+    res.status(500).json({ message: 'Something went wrong', error: error.message });
+  }
 }
 
 exports.login = async (req, res) => {
