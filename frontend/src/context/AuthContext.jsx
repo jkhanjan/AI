@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getToken, setToken, logout } from "@/lib/auth";
+import { getToken, setToken, logout as clearAuthCookie } from "@/lib/auth";
 
 const AuthContext = createContext();
 
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    logout();
+    clearAuthCookie();
     setUser(null);
 
     localStorage.removeItem("user");
