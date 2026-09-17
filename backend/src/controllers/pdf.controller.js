@@ -19,7 +19,13 @@ exports.uploadMiddleware = upload.single("pdf");
 exports.uploadPdf = async (req, res) => {
   try {
     const { chatId } = req.body;
-    const userId = req.user._id; 
+    const userId = req.user._id;
+
+    const chat = await Chat.findOne({ _id: chatId, userId });
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+
     const parsed = await pdfParse(req.file.buffer);
     // save pdf record
     const pdf = await Pdf.create({
@@ -47,9 +53,9 @@ exports.uploadPdf = async (req, res) => {
 
 exports.getPdfStatus = async (req, res) => {
   try {
-    const pdf = await Pdf.findById(req.params.pdfId)
+    const pdf = await Pdf.findOne({ _id: req.params.pdfId, userId: req.user._id })
       .select("filename status pageCount totalChunks createdAt");
-    
+
     if (!pdf) return res.status(404).json({ message: "PDF not found" });
 
     res.json({ pdf });

@@ -44,7 +44,11 @@ exports.getChats = async (req, res) => {
 };
 
 exports.getChatById = async (req, res) => {
-  const chat = await Chat.findById(req.params.id);
+  const chat = await Chat.findOne({ _id: req.params.id, userId: req.user.id });
+
+  if (!chat) {
+    return res.status(404).json({ message: "Chat not found" });
+  }
 
   res.json(chat);
 };
@@ -76,6 +80,11 @@ exports.addMessageStream = async (req, res) => {
     const { content } = req.body;
     const chatId = req.params.id;
     if (!content) return res.status(400).json({ message: "No content provided" });
+
+    const chat = await Chat.findOne({ _id: chatId, userId: req.user.id });
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
 
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
@@ -162,6 +171,11 @@ exports.addMessageStream = async (req, res) => {
 };
 
 exports.getMessages = async (req, res) => {
+  const chat = await Chat.findOne({ _id: req.params.id, userId: req.user.id });
+  if (!chat) {
+    return res.status(404).json({ message: "Chat not found" });
+  }
+
   const messages = await Message.find({
     chatId: req.params.id
   }).sort({ createdAt: 1 });
@@ -172,7 +186,7 @@ exports.getMessages = async (req, res) => {
 exports.deleteTab = async (req, res) => {
   const chatId = req.params.id;
 
-  const deletedChat = await Chat.findByIdAndDelete(chatId);
+  const deletedChat = await Chat.findOneAndDelete({ _id: chatId, userId: req.user.id });
 
   if (!deletedChat) {
     return res.status(404).json({ message: 'Chat not found' });
