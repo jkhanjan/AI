@@ -41,7 +41,7 @@ async function rerankChunks({ query, chunks, topK = 3 }) {
       .slice(0, topK);
   } catch (error) {
     console.error("Reranking failed:", error);
-    return chunks.slice(0, topK); // fallback
+    return chunks.slice(0, topK);
   }
 }
 

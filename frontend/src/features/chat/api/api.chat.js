@@ -57,7 +57,7 @@ export const deleteChatDB = async (chatId) => {
 
 export const uploadPdfDB = async (formData, chatId) => {
   const res = await api.post(`${PDF_ROUTE}/upload`, formData, {
-    headers: { "Content-Type": undefined }  // removes any global override
+    headers: { "Content-Type": undefined } 
   });
   return res.data;
 };
